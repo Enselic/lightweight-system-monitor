@@ -1,0 +1,11 @@
+[package]
+edition = "2024"
+name = "lightweight-system-monitor"
+version = "0.0.1"
+description = "A lightweight system monitor for Linux."
+homepage = "https://github.com/Enselic/lightweight-system-monitor"
+documentation = "https://docs.rs/lightweight-system-monitor"
+readme = "README.md"
+keywords = ["system", "monitor", "linux"]
+license = "MIT"
+repository = "https://github.com/Enselic/lightweight-system-monitor"
