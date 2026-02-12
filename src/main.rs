@@ -13,7 +13,7 @@ impl Default for Args {
     }
 }
 
-fn error_exit(msg: String) -> ! {
+fn error_exit(msg: &str) -> ! {
     eprintln!("{}", msg);
     std::process::exit(1);
 }
@@ -29,8 +29,8 @@ fn args() -> Args {
     for arg in std::env::args().skip(1) {
         match state {
             State::IntervalMillis => {
-                args.interval_millis = arg.parse::<u64>().unwrap_or_else(|e| {
-                    error_exit(format!("Failed to parse --interval-millis argument: {}", e));
+                args.interval_millis = arg.parse::<u64>().unwrap_or_else(|_| {
+                    error_exit("Failed to parse --interval-millis argument");
                 });
                 state = State::Start;
             }
@@ -39,7 +39,7 @@ fn args() -> Args {
                     state = State::IntervalMillis;
                     continue;
                 } else {
-                    error_exit(format!("Unknown argument: {}", arg));
+                    error_exit("Unknown argument");
                 }
             }
         }

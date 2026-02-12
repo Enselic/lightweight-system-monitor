@@ -16,8 +16,8 @@ impl std::ops::Sub for MemInfo {
 }
 
 pub(crate) fn snapshot() -> MemInfo {
-    let file = std::fs::File::open("/proc/meminfo").unwrap_or_else(|e| {
-        super::error_exit(format!("Failed to open /proc/meminfo: {}", e));
+    let file = std::fs::File::open("/proc/meminfo").unwrap_or_else(|_| {
+        super::error_exit("Failed to open /proc/meminfo");
     });
     let reader = std::io::BufReader::new(file);
 
