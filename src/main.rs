@@ -13,6 +13,11 @@ impl Default for Args {
     }
 }
 
+fn error_exit(msg: String) -> ! {
+    eprintln!("{}", msg);
+    std::process::exit(1);
+}
+
 fn args() -> Args {
     enum State {
         Start,
@@ -25,7 +30,7 @@ fn args() -> Args {
         match state {
             State::IntervalMillis => {
                 args.interval_millis = arg.parse::<u64>().unwrap_or_else(|e| {
-                    panic!("Failed to parse --interval-millis argument: {}", e)
+                    error_exit(format!("Failed to parse --interval-millis argument: {}", e));
                 });
                 state = State::Start;
             }
@@ -34,7 +39,7 @@ fn args() -> Args {
                     state = State::IntervalMillis;
                     continue;
                 } else {
-                    panic!("Unknown argument: {}", arg);
+                    error_exit(format!("Unknown argument: {}", arg));
                 }
             }
         }
@@ -48,7 +53,7 @@ fn main() {
     let mut prev_cpu_times = cpu_times::snapshot();
     let baseline_mem_info = mem_info::snapshot();
 
-    println!("seconds	CPU%	MemAvai	MemFree");
+    println!("ms	CPU%	MemAvai	MemFree");
     let start_time = std::time::SystemTime::now();
     loop {
         std::thread::sleep(std::time::Duration::from_millis(args.interval_millis));
@@ -59,9 +64,9 @@ fn main() {
 
         let mem_info_delta = baseline_mem_info - mem_info::snapshot();
 
-        let elapsed = start_time.elapsed().unwrap().as_secs_f64();
+        let elapsed = start_time.elapsed().unwrap().as_millis();
         println!(
-            "{elapsed:.2}	{cpu_usage_percentage:.2}	{}	{}",
+            "{elapsed}	{cpu_usage_percentage:.2}	{}	{}",
             mem_info_delta.available_kb, mem_info_delta.free_kb,
         );
     }
