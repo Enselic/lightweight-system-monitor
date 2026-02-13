@@ -1,57 +1,9 @@
+mod args;
 mod cpu_times;
 mod mem_info;
 
-struct Args {
-    interval_millis: u64,
-}
-
-impl Default for Args {
-    fn default() -> Self {
-        Self {
-            interval_millis: 1000,
-        }
-    }
-}
-
-fn error_exit(msg: &str) -> ! {
-    eprintln!("{}", msg);
-    std::process::exit(1);
-}
-
-fn args() -> Args {
-    enum State {
-        ExpectingArg,
-        ExpectingIntervalMillisValue,
-    }
-    let mut args = Args::default();
-
-    let mut state = State::ExpectingArg;
-    for arg in std::env::args().skip(1) {
-        match state {
-            State::ExpectingIntervalMillisValue => {
-                args.interval_millis = arg.parse::<u64>().unwrap_or_else(|_| {
-                    error_exit(&format!(
-                        "Failed to parse --interval-millis argument `{}`",
-                        arg
-                    ));
-                });
-                state = State::ExpectingArg;
-            }
-            State::ExpectingArg => {
-                if arg == "--interval-millis" {
-                    state = State::ExpectingIntervalMillisValue;
-                    continue;
-                } else {
-                    error_exit(&format!("Unknown argument `{}`", arg));
-                }
-            }
-        }
-    }
-    args
-}
-
 fn main() {
-    let args = args();
+    let args = args::parse();
 
     let mut prev_cpu_times = cpu_times::snapshot();
     let baseline_mem_info = mem_info::snapshot();
@@ -73,4 +25,9 @@ fn main() {
             mem_info_delta.available_kb, mem_info_delta.free_kb,
         );
     }
+}
+
+fn error_exit(msg: &str) -> ! {
+    eprintln!("{}", msg);
+    std::process::exit(1);
 }
