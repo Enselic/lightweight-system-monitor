@@ -61,7 +61,7 @@ impl CpuTimes {
 
         let used_cpu_time = total_cpu_time - idle_cpu_time;
 
-        used_cpu_time * 100 / total_cpu_time
+        used_cpu_time * 1000 / total_cpu_time
     }
 }
 

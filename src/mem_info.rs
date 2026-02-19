@@ -1,7 +1,6 @@
 #[derive(Default, Clone, Copy)]
 pub(crate) struct MemInfo {
     pub(crate) available_kb: i64,
-    pub(crate) free_kb: i64,
 }
 
 impl std::ops::Sub for MemInfo {
@@ -10,7 +9,6 @@ impl std::ops::Sub for MemInfo {
     fn sub(self, rhs: MemInfo) -> Self::Output {
         MemInfo {
             available_kb: self.available_kb - rhs.available_kb,
-            free_kb: self.free_kb - rhs.free_kb,
         }
     }
 }
@@ -26,13 +24,6 @@ pub(crate) fn snapshot() -> MemInfo {
     for line in std::io::BufRead::lines(reader).map_while(Result::ok) {
         if line.starts_with("MemAvailable:") {
             mem_info.available_kb = line
-                .split_whitespace()
-                .nth(1)
-                .unwrap_or("0")
-                .parse::<i64>()
-                .unwrap_or(0);
-        } else if line.starts_with("MemFree:") {
-            mem_info.free_kb = line
                 .split_whitespace()
                 .nth(1)
                 .unwrap_or("0")
