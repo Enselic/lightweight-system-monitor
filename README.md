@@ -1,6 +1,6 @@
 # lightweight-system-monitor
 
-A Linux system monitor so lightweight even floating point math is prohibited.
+A Linux system monitor so lightweight even floating point math is banned.
 
 [Compiles](./build-minimal-binary.sh) 100% safe Rust to a 33 kB binary.
 
@@ -9,7 +9,7 @@ A Linux system monitor so lightweight even floating point math is prohibited.
 Typically used over ssh:
 
 ```console
-$ ssh $TARGET_HOST lightweight-system-monitor | tee monitor.log
+$ ssh $TARGET_HOST lightweight-system-monitor | tee monitor.tsv
 ms      CPU‰    Avail kB
 1008    4       -324
 2053    1       -324
@@ -28,4 +28,4 @@ ms      CPU‰    Avail kB
 
 ### Visualization
 
-`monitor.log` can easily be visualized by tools such as _Excel_ or _gnuplot_.
+`monitor.tsv` can easily be visualized by tools such as _Google Sheets_, _Microsoft Excel_, or (not as easily) _gnuplot_.
