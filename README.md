@@ -10,7 +10,7 @@ Typically used over ssh:
 
 ```console
 $ ssh $TARGET_HOST lightweight-system-monitor | tee monitor.tsv
-ms      CPU‰    Avail kB
+ms      CPU‰    Avail_kB
 1008    4       -324
 2053    1       -324
 3070    2       -1112
@@ -24,7 +24,7 @@ ms      CPU‰    Avail kB
 ### Columns
 - `ms`: Elapsed time in milliseconds since the monitor started.
 - `CPU‰`: CPU usage in parts per thousand (‰) since the last sample.
-- `Avail kB`: Change in available memory in kilobytes since the monitor started.
+- `Avail_kB`: Change in available memory (`MemAvailable` from `/proc/meminfo`) since the monitor started.
 
 ### Visualization
 

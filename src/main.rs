@@ -8,7 +8,7 @@ fn main() {
     let mut prev_cpu_times = cpu_times::snapshot();
     let baseline_mem_info = mem_info::snapshot();
 
-    println!("ms	CPU‰	Avail kB");
+    println!("ms\tCPU‰\tAvail_kB");
     let start_time = std::time::SystemTime::now();
     loop {
         // Sleep
@@ -25,7 +25,7 @@ fn main() {
         // Print
         let elapsed = start_time.elapsed().unwrap().as_millis();
         println!(
-            "{elapsed}	{cpu_usage_percentage}	{available}",
+            "{elapsed}\t{cpu_usage_percentage}\t{available}",
             available = mem_info_delta.available_kb,
         );
     }
