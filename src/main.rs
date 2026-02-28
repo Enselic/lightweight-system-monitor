@@ -22,12 +22,26 @@ fn main() {
         // Sample Memory
         let mem_info_delta = mem_info::snapshot() - baseline_mem_info;
 
+        // Sample Aux Data Point
+        let aux = get_aux(&args.aux_data_point_path);
+
         // Print
         let elapsed = start_time.elapsed().unwrap().as_millis();
         println!(
-            "{elapsed}\t{cpu_usage_percentage}\t{available}",
+            "{elapsed}\t{cpu_usage_percentage}\t{available}{aux}",
             available = mem_info_delta.available_kb,
         );
+    }
+}
+
+fn get_aux(aux_data_point_path: &Option<String>) -> String {
+    if let Some(path) = aux_data_point_path {
+        match std::fs::read_to_string(path) {
+            Ok(content) => format!("\t{}", content.trim()),
+            Err(e) => format!("\tError reading aux data point: {}", e),
+        }
+    } else {
+        String::new()
     }
 }
 
