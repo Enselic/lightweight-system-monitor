@@ -8,7 +8,7 @@ fn main() {
     let mut prev_cpu_times = cpu_times::snapshot();
     let baseline_mem_info = mem_info::snapshot();
 
-    println!("ms\tCPU‰\tAvail_kB");
+    println!("ms\tCPU‰\tMemAvil\tAux");
     let start_time = std::time::SystemTime::now();
     loop {
         // Sleep
@@ -21,16 +21,14 @@ fn main() {
 
         // Sample Memory
         let mem_info_delta = mem_info::snapshot() - baseline_mem_info;
+        let available = mem_info_delta.available_kb;
 
         // Sample Aux Data Point
         let aux = get_aux(&args.aux_data_point_path);
 
         // Print
         let elapsed = start_time.elapsed().unwrap().as_millis();
-        println!(
-            "{elapsed}\t{cpu_usage_percentage}\t{available}{aux}",
-            available = mem_info_delta.available_kb,
-        );
+        println!("{elapsed}\t{cpu_usage_percentage}\t{available}{aux}");
     }
 }
 
