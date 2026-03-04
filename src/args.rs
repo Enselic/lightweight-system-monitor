@@ -15,11 +15,14 @@ pub struct Args {
 }
 
 impl Args {
-    pub fn polled_title_or_empty(&self) -> &str {
-        match self.polled_path {
-            Some(_) => self.polled_title.as_deref().unwrap_or("\tPolled"),
-            None => "",
-        }
+    pub fn polled_title_or_empty(&self) -> String {
+        format!(
+            "\t{}",
+            match self.polled_path {
+                Some(_) => self.polled_title.as_deref().unwrap_or("Polled"),
+                None => "",
+            }
+        )
     }
 }
 
