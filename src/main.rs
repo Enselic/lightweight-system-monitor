@@ -21,14 +21,14 @@ fn main() {
 
         // Sample Memory
         let mem_info_delta = mem_info::snapshot() - baseline_mem_info;
-        let available = mem_info_delta.available_kb;
+        let available_kb = mem_info_delta.available_kb;
 
         // Sample Aux Data Point
         let polled = get_polled(&args.polled_path);
 
         // Print
         let elapsed = start_time.elapsed().unwrap().as_secs_f64();
-        println!("{elapsed:.2}\t{cpu_usage_percentage:.1}\t{available}{polled}");
+        println!("{elapsed:.2}\t{cpu_usage_percentage:.1}\t{available_kb}{polled}");
     }
 }
 
