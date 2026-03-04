@@ -6,8 +6,21 @@ pub struct Args {
     pub interval_millis: u64,
 
     #[argh(option)]
-    /// optional file path for an auxiliary data point displayed as the final column.
-    pub aux_data_point_path: Option<String>,
+    /// optional path to a file from which to read poll values.
+    pub polled_path: Option<String>,
+
+    #[argh(option)]
+    /// optional name for the poll values.
+    pub polled_title: Option<String>,
+}
+
+impl Args {
+    pub fn polled_title_or_empty(&self) -> &str {
+        match self.polled_path {
+            Some(_) => self.polled_title.as_deref().unwrap_or("\tPolled"),
+            None => "",
+        }
+    }
 }
 
 pub fn parse() -> Args {
