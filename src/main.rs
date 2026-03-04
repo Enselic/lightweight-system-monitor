@@ -8,7 +8,7 @@ fn main() {
     let mut prev_cpu_times = cpu_times::snapshot();
     let baseline_mem_info = mem_info::snapshot();
 
-    println!("ms\tCPU‰\tAvail_kB");
+    println!("seconds\tCPU%\tAvai_kB{}", args.polled_title_or_empty());
     let start_time = std::time::SystemTime::now();
     loop {
         // Sleep
@@ -21,13 +21,28 @@ fn main() {
 
         // Sample Memory
         let mem_info_delta = mem_info::snapshot() - baseline_mem_info;
+        let available_kb = mem_info_delta.available_kb;
+
+        // Sample Aux Data Point
+        let polled = get_polled(&args.polled_path);
 
         // Print
-        let elapsed = start_time.elapsed().unwrap().as_millis();
-        println!(
-            "{elapsed}\t{cpu_usage_percentage}\t{available}",
-            available = mem_info_delta.available_kb,
-        );
+        let elapsed = start_time.elapsed().unwrap().as_secs_f64();
+        println!("{elapsed:.2}\t{cpu_usage_percentage:.1}\t{available_kb}{polled}");
+    }
+}
+
+fn get_polled(polled_path: &Option<String>) -> String {
+    if let Some(path) = polled_path {
+        format!(
+            "\t{}",
+            match std::fs::read_to_string(path) {
+                Ok(content) => content.trim().to_string(),
+                Err(_) => "_".to_string(),
+            }
+        )
+    } else {
+        String::new()
     }
 }
 

@@ -1,43 +1,28 @@
+#[derive(argh::FromArgs)]
+/// Sample CPU and memory usage at fixed intervals.
 pub struct Args {
+    #[argh(option, default = "1000")]
+    /// interval between samples in milliseconds.
     pub interval_millis: u64,
+
+    #[argh(option)]
+    /// optional path to a file from which to read poll values.
+    pub polled_path: Option<String>,
+
+    #[argh(option)]
+    /// optional name for the poll values.
+    pub polled_title: Option<String>,
 }
 
-impl Default for Args {
-    fn default() -> Self {
-        Self {
-            interval_millis: 1000,
+impl Args {
+    pub fn polled_title_or_empty(&self) -> &str {
+        match self.polled_path {
+            Some(_) => self.polled_title.as_deref().unwrap_or("\tPolled"),
+            None => "",
         }
     }
 }
 
 pub fn parse() -> Args {
-    enum State {
-        ExpectingArg,
-        ExpectingIntervalMillisValue,
-    }
-    let mut args = Args::default();
-
-    let mut state = State::ExpectingArg;
-    for arg in std::env::args().skip(1) {
-        match state {
-            State::ExpectingIntervalMillisValue => {
-                args.interval_millis = arg.parse::<u64>().unwrap_or_else(|_| {
-                    super::error_exit(&format!(
-                        "Failed to parse --interval-millis argument `{}`",
-                        arg
-                    ));
-                });
-                state = State::ExpectingArg;
-            }
-            State::ExpectingArg => {
-                if arg == "--interval-millis" {
-                    state = State::ExpectingIntervalMillisValue;
-                    continue;
-                } else {
-                    super::error_exit(&format!("Unknown argument `{}`", arg));
-                }
-            }
-        }
-    }
-    args
+    argh::from_env()
 }
