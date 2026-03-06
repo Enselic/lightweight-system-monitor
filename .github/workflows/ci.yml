@@ -30,6 +30,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: cargo build
+      - run: rustup install nightly --profile minimal
+      - run: rustup component add rust-src --toolchain nightly
+      - run: ./build-minimal-binary.sh
 
   lint:
     runs-on: ubuntu-latest
