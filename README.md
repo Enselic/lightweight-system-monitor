@@ -1,8 +1,6 @@
 # lightweight-system-monitor
 
-A Linux system monitor so lightweight even floating point math is banned.
-
-[Compiles](./build-minimal-binary.sh) 100% safe Rust to a 33 kB binary.
+A lightweight ([47 kB](./build-minimal-binary.sh)) Linux system monitor.
 
 ## Usage
 
@@ -10,21 +8,33 @@ Typically used over ssh:
 
 ```console
 $ ssh $TARGET_HOST lightweight-system-monitor | tee monitor.tsv
-ms      CPU‰    Avail_kB
-1008    4       -324
-2053    1       -324
-3070    2       -1112
-4088    1       -2168
-5102    4       -3064
-6148    0       -3568
-7164    7       -20308
+seconds CPU%    ΔRAM kB
+1.0     0.1     1316
+2.0     0.1     148
+3.1     0.1     652
+4.1     0.2     -376
+5.1     1.3     -1048
+6.1     0.2     38632
+7.1     0.4     42760
 ...
 ```
 
+### Adding Auxiliary Data Points
+
+The `--polled-path` option allows you to specify a file path to be read and included as an additional column in the output. This is useful for monitoring custom metrics or values that are not covered by CPU and memory usage.
+
+Use `--polled-title` to specify a custom title for this additional column in the header.
+
+Example:
+
+```console
+lightweight-system-monitor --polled-path /path/to/aux_data.txt --polled-title "AuxData"
+```
+
 ### Columns
-- `ms`: Elapsed time in milliseconds since the monitor started.
-- `CPU‰`: CPU usage in parts per thousand (‰) since the last sample.
-- `Avail_kB`: Change in available memory (`MemAvailable` from `/proc/meminfo`) since the monitor started.
+- `seconds`: Elapsed time in seconds since the monitor started.
+- `CPU%`: CPU usage in percent (%) since the last sample.
+- `ΔRAM kB`: Change in available memory (`MemAvailable` from `/proc/meminfo`) since the monitor started.
 
 ### Visualization
 
