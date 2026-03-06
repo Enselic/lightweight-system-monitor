@@ -43,7 +43,7 @@ impl std::ops::Sub for CpuTimes {
 }
 
 impl CpuTimes {
-    pub fn usage_percentage_since(&self, prev: &CpuTimes) -> u64 {
+    pub fn usage_percentage_since(&self, prev: &CpuTimes) -> f64 {
         let delta = *self - *prev;
 
         let total_cpu_time = delta.user
@@ -61,7 +61,7 @@ impl CpuTimes {
 
         let used_cpu_time = total_cpu_time - idle_cpu_time;
 
-        used_cpu_time * 1000 / total_cpu_time
+        used_cpu_time as f64 * 100.0 / total_cpu_time as f64
     }
 }
 

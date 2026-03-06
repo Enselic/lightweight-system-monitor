@@ -1,14 +1,21 @@
-mod args;
+#[derive(argh::FromArgs)]
+/// Lightweight Linux system monitor for CPU and RAM.
+pub struct Args {
+    #[argh(option, default = "1000")]
+    /// interval between samples in milliseconds.
+    pub interval_millis: u64,
+}
+
 mod cpu_times;
 mod mem_info;
 
 fn main() {
-    let args = args::parse();
+    let args: Args = argh::from_env();
 
     let mut prev_cpu_times = cpu_times::snapshot();
     let baseline_mem_info = mem_info::snapshot();
 
-    println!("ms\tCPU‰\tAvail_kB");
+    println!("seconds\tCPU%\tΔRAM kB");
     let start_time = std::time::SystemTime::now();
     loop {
         // Sleep
@@ -21,13 +28,11 @@ fn main() {
 
         // Sample Memory
         let mem_info_delta = mem_info::snapshot() - baseline_mem_info;
+        let available_kb = mem_info_delta.available_kb;
 
         // Print
-        let elapsed = start_time.elapsed().unwrap().as_millis();
-        println!(
-            "{elapsed}\t{cpu_usage_percentage}\t{available}",
-            available = mem_info_delta.available_kb,
-        );
+        let elapsed = start_time.elapsed().unwrap().as_secs_f64();
+        println!("{elapsed:.1}\t{cpu_usage_percentage:.1}\t{available_kb}");
     }
 }
 
