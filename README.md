@@ -1,6 +1,6 @@
 # lightweight-system-monitor
 
-A lightweight ([47 kB](./build-minimal-binary.sh)) Linux system monitor.
+A lightweight ([48 kB](./build-minimal-binary.sh)) Linux system monitor.
 
 ## Usage
 
