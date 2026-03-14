@@ -4,6 +4,11 @@ pub struct Args {
     #[argh(option, default = "1000")]
     /// interval between samples in milliseconds.
     pub interval_millis: u64,
+
+    #[argh(option, default = "0")]
+    /// optional amount of kB to subtract from `/proc/meminfo` `MemAvailable`
+    /// before reporting as `Avail_kB`.
+    pub mem_available_baseline_kb: i64,
 }
 
 mod cpu_times;
@@ -13,9 +18,8 @@ fn main() {
     let args: Args = argh::from_env();
 
     let mut prev_cpu_times = cpu_times::snapshot();
-    let baseline_mem_info = mem_info::snapshot();
 
-    println!("seconds\tCPU%\tΔRAM kB");
+    println!("seconds\tCPU%\tAvail_kB");
     let start_time = std::time::SystemTime::now();
     loop {
         // Sleep
@@ -27,8 +31,7 @@ fn main() {
         prev_cpu_times = current_cpu_times;
 
         // Sample Memory
-        let mem_info_delta = mem_info::snapshot() - baseline_mem_info;
-        let available_kb = mem_info_delta.available_kb;
+        let available_kb = mem_info::mem_available_snapshot() - args.mem_available_baseline_kb;
 
         // Print
         let elapsed = start_time.elapsed().unwrap().as_secs_f64();

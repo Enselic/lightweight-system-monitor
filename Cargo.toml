@@ -1,7 +1,7 @@
 [package]
 edition = "2024"
 name = "lightweight-system-monitor"
-version = "0.0.2"
+version = "0.0.3"
 description = "A Linux system monitor so lightweight even floating point math is prohibited."
 homepage = "https://github.com/Enselic/lightweight-system-monitor"
 documentation = "https://docs.rs/lightweight-system-monitor"
