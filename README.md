@@ -8,33 +8,26 @@ Typically used over ssh:
 
 ```console
 $ ssh $TARGET_HOST lightweight-system-monitor | tee monitor.tsv
-seconds CPU%    ΔRAM kB
-1.0     0.1     1316
-2.0     0.1     148
-3.1     0.1     652
-4.1     0.2     -376
-5.1     1.3     -1048
-6.1     0.2     38632
-7.1     0.4     42760
+seconds CPU%    Avail_kB
+1.0     0.1     4231316
+2.0     0.1     4231464
+3.1     0.1     4232116
+4.1     0.2     4231740
+5.1     1.3     4230692
+6.1     0.2     4269324
+7.1     0.4     4312084
 ...
 ```
 
-### Adding Auxiliary Data Points
+### CLI options
 
-The `--polled-path` option allows you to specify a file path to be read and included as an additional column in the output. This is useful for monitoring custom metrics or values that are not covered by CPU and memory usage.
-
-Use `--polled-title` to specify a custom title for this additional column in the header.
-
-Example:
-
-```console
-lightweight-system-monitor --polled-path /path/to/aux_data.txt --polled-title "AuxData"
-```
+- `--interval-millis <ms>`: Sampling interval in milliseconds (default: `1000`).
+- `--mem-available-baseline-kb <kB>`: Value subtracted from `MemAvailable` before printing `Avail_kB` (default: `0`).
 
 ### Columns
 - `seconds`: Elapsed time in seconds since the monitor started.
 - `CPU%`: CPU usage in percent (%) since the last sample.
-- `ΔRAM kB`: Change in available memory (`MemAvailable` from `/proc/meminfo`) since the monitor started.
+- `Avail_kB`: Current `MemAvailable` from `/proc/meminfo`, minus `--mem-available-baseline-kb`.
 
 ### Visualization
 
