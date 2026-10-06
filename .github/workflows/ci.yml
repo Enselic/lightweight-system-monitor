@@ -24,15 +24,41 @@ jobs:
       - run: jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
 
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: lightweight-system-monitor-linux
+            binary_name: lightweight-system-monitor
+            asset_name: lightweight-system-monitor-linux
+          - os: windows-latest
+            artifact_name: lightweight-system-monitor-windows
+            binary_name: lightweight-system-monitor.exe
+            asset_name: lightweight-system-monitor-windows.exe
+          - os: macos-latest
+            artifact_name: lightweight-system-monitor-macos
+            binary_name: lightweight-system-monitor
+            asset_name: lightweight-system-monitor-macos
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read # For actions/checkout@v4
     steps:
       - uses: actions/checkout@v4
       - run: cargo build
-      - run: rustup install nightly --profile minimal
-      - run: rustup component add rust-src --toolchain nightly
-      - run: ./build-minimal-binary.sh
+      - run: cargo build --locked --release
+      - if: matrix.os == 'ubuntu-latest'
+        run: rustup install nightly --profile minimal
+      - if: matrix.os == 'ubuntu-latest'
+        run: rustup component add rust-src --toolchain nightly
+      - if: matrix.os == 'ubuntu-latest'
+        run: ./build-minimal-binary.sh
+      - shell: bash
+        run: cp "target/release/${{ matrix.binary_name }}" "${{ matrix.asset_name }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.asset_name }}
+          if-no-files-found: error
 
   lint:
     runs-on: ubuntu-latest

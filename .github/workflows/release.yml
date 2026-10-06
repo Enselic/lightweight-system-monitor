@@ -46,3 +46,13 @@ jobs:
         run: |
           git tag ${{ steps.version.outputs.GIT_TAG }}
           git push origin ${{ steps.version.outputs.GIT_TAG }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.GIT_TAG }}
+          files: dist/*
